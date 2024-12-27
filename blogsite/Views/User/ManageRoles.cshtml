@@ -1,0 +1,26 @@
+@model string
+@using Microsoft.AspNetCore.Identity
+
+<h1>Manage Roles for User</h1>
+
+<form asp-action="ManageRoles" method="post">
+    <input type="hidden" name="userId" value="@ViewBag.UserId" />
+
+    <h4>Current Roles:</h4>
+    <ul>
+        @foreach (var role in ViewBag.UserRoles as IEnumerable<string>)
+        {
+            <li>@role</li>
+        }
+    </ul>
+
+    <h4>All Roles:</h4>
+    @foreach (var role in ViewBag.Roles as IEnumerable<IdentityRole>)
+    {
+        <div>
+            <input type="checkbox" name="roles" value="@role.Name" /> @role.Name
+        </div>
+    }
+
+    <button type="submit" class="btn btn-success">Save Changes</button>
+</form>

@@ -1,0 +1,43 @@
+@model blogsite.Models.Blog
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<h2>@Model.Title</h2>
+<p>@Model.Content</p>
+<p><strong>Category:</strong> @(Model.Category?.Name ?? "Unknown")</p>
+<p><strong>Author:</strong> @(Model.CreatedBy ?? "Unknown")</p>
+<p><strong>Published On:</strong> @Model.CreatedAt.ToShortDateString()</p>
+
+<hr />
+
+<h3>Comments</h3>
+@if (Model.Comments != null && Model.Comments.Any())
+{
+    <ul>
+        @foreach (var comment in Model.Comments)
+        {
+            <li>
+                <strong>@comment.Author:</strong> @comment.Content
+                <small class="text-muted">@comment.CreatedAt.ToShortDateString()</small>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No comments yet.</p>
+}
+
+<hr />
+
+<h3>Add a Comment</h3>
+<form asp-action="AddComment" method="post">
+    <input type="hidden" name="BlogId" value="@Model.Id" />
+    <div class="mb-3">
+        <label for="Content" class="form-label">Comment</label>
+        <textarea class="form-control" id="Content" name="Content" rows="3" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>

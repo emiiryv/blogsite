@@ -1,0 +1,48 @@
+@model IEnumerable<blogsite.Models.Blog>
+
+@{
+    ViewData["Title"] = "Bloglar";
+}
+
+<h2>Bloglar</h2>
+
+<!-- Yeni Blog Ekle Düğmesi -->
+<div class="mb-3">
+    @if (User.IsInRole("Admin") || User.IsInRole("Editor"))
+    {
+        <a asp-action="Create" class="btn btn-success">Yeni Blog Ekle</a>
+    }
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Content</th>
+            <th>Author</th> <!-- Blog yazarı -->
+            <th>Category</th>
+            <th>Created At</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Title</td>
+                <td>@item.Content</td>
+                <td>@item.CreatedBy</td> <!-- Blog yazarı -->
+                <td>@(item.Category != null ? item.Category.Name : "Unknown")</td>
+                <td>@item.CreatedAt.ToShortDateString()</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Details</a>
+                    @if (User.IsInRole("Admin") || User.Identity.Name == item.CreatedBy)
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
