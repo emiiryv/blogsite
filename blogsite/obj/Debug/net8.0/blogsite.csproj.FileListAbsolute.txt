@@ -253,3 +253,4 @@
 /Users/emirmakaveli/Desktop/blogsite/blogsite/obj/Debug/net8.0/blogsite.pdb
 /Users/emirmakaveli/Desktop/blogsite/blogsite/obj/Debug/net8.0/blogsite.genruntimeconfig.cache
 /Users/emirmakaveli/Desktop/blogsite/blogsite/obj/Debug/net8.0/ref/blogsite.dll
+/Users/emirmakaveli/Desktop/blogsite/blogsite/obj/Debug/net8.0/blogsite.sourcelink.json

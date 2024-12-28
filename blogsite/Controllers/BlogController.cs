@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace blogsite.Controllers
 {
-    [Authorize(Roles = "Admin,Editor")]
+    [Authorize] // Genel olarak giriş yapmış tüm kullanıcılar için erişilebilir
     public class BlogController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -19,6 +19,7 @@ namespace blogsite.Controllers
         }
 
         // GET: Blog
+        [Authorize(Roles = "Admin,Editor")] // Sadece Admin ve Editor için
         public async Task<IActionResult> Index()
         {
             var blogs = User.IsInRole("Admin")
@@ -29,6 +30,7 @@ namespace blogsite.Controllers
         }
 
         // GET: Blog/Create
+        [Authorize(Roles = "Admin,Editor")] // Sadece Admin ve Editor için
         public IActionResult Create()
         {
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
@@ -37,6 +39,7 @@ namespace blogsite.Controllers
 
         // POST: Blog/Create
         [HttpPost]
+        [Authorize(Roles = "Admin,Editor")] // Sadece Admin ve Editor için
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,Content,CategoryId")] Blog blog, IFormFile? image)
         {
@@ -73,6 +76,7 @@ namespace blogsite.Controllers
         }
 
         // GET: Blog/Edit/5
+        [Authorize(Roles = "Admin,Editor")] // Sadece Admin ve Editor için
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -92,6 +96,7 @@ namespace blogsite.Controllers
 
         // POST: Blog/Edit/5
         [HttpPost]
+        [Authorize(Roles = "Admin,Editor")] // Sadece Admin ve Editor için
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Content,CategoryId")] Blog blog, IFormFile? image)
         {
@@ -145,6 +150,7 @@ namespace blogsite.Controllers
         }
 
         // GET: Blog/Delete/5
+        [Authorize(Roles = "Admin,Editor")] // Sadece Admin ve Editor için
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -163,6 +169,7 @@ namespace blogsite.Controllers
 
         // POST: Blog/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin,Editor")] // Sadece Admin ve Editor için
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -174,6 +181,9 @@ namespace blogsite.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+
+        // GET: Blog/Details/5
+        [Authorize] // Giriş yapan herhangi bir kullanıcı erişebilir
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -182,8 +192,8 @@ namespace blogsite.Controllers
             }
 
             var blog = await _context.Blogs
-                .Include(b => b.Category) // Kategori bilgisi dahil
-                .Include(b => b.Comments) // Yorum bilgileri (varsa)
+                .Include(b => b.Category)
+                .Include(b => b.Comments)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (blog == null)
@@ -193,6 +203,9 @@ namespace blogsite.Controllers
 
             return View(blog);
         }
+
+        // POST: Blog/AddComment
+        [Authorize] // Giriş yapan herhangi bir kullanıcı yorum yapabilir
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddComment(int BlogId, string Content)
@@ -216,8 +229,6 @@ namespace blogsite.Controllers
 
             return RedirectToAction("Details", new { id = BlogId });
         }
-
-
 
         private bool BlogExists(int id)
         {
