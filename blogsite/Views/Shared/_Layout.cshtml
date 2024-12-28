@@ -30,6 +30,9 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="@Url.Action("Index", "Category")">Categories</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("Index", "UserManagement")">User Management</a>
+                            </li>
                         }
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
