@@ -14,7 +14,7 @@ namespace blogsite.Data
 
         // Veritabanı tabloları için DbSet tanımları
         public DbSet<Blog> Blogs { get; set; }
-        public DbSet<Comment> Comments { get; set; } 
+        public DbSet<Comment> Comments { get; set; }
         public DbSet<Category> Categories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -68,6 +68,13 @@ namespace blogsite.Data
                 .Property(c => c.CreatedAt)
                 .HasColumnType("timestamp with time zone")
                 .HasDefaultValueSql("NOW()");
+
+            // Blog-Comment ilişkisi için Cascade Delete kuralı
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.Blog)
+                .WithMany(b => b.Comments)
+                .HasForeignKey(c => c.BlogId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

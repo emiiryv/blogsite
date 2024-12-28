@@ -145,29 +145,41 @@ namespace blogsite.Controllers
             }
 
             var category = await _context.Categories
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(c => c.Blogs) // Kategoriye ait blogları dahil et
+                .FirstOrDefaultAsync(c => c.Id == id);
+
             if (category == null)
             {
                 return NotFound();
             }
 
+            if (category.Blogs.Any())
+            {
+                TempData["ErrorMessage"] = "This category cannot be deleted because it has associated blogs.";
+                return RedirectToAction(nameof(Index));
+            }
+
             return View(category);
         }
 
-        // POST: Category/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var category = await _context.Categories.FindAsync(id);
-            if (category != null)
+
+            if (category == null)
             {
-                _context.Categories.Remove(category);
+                return NotFound();
             }
 
+            _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Category deleted successfully.";
             return RedirectToAction(nameof(Index));
         }
+
 
         private bool CategoryExists(int id)
         {
