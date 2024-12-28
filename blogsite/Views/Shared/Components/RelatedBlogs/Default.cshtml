@@ -1,0 +1,19 @@
+@model IEnumerable<blogsite.Models.Blog>
+
+<h3>Related Blogs</h3>
+@if (Model != null && Model.Any())
+{
+    <ul class="list-group">
+        @foreach (var blog in Model)
+        {
+            <li class="list-group-item">
+                <a href="@Url.Action("Details", "Blog", new { id = blog.Id })">@blog.Title</a>
+                <small class="text-muted d-block">@blog.CreatedAt.ToShortDateString()</small>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No related blogs available.</p>
+}

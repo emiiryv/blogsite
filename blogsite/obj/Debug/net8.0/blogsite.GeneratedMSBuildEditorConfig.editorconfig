@@ -26,6 +26,10 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = /Users/emirmakaveli/Desktop/blogsite/blogsite
 build_property._RazorSourceGeneratorDebug = 
 
+[/Users/emirmakaveli/Desktop/blogsite/blogsite/ViewComponents/RelatedBlogs.razor]
+build_metadata.AdditionalFiles.TargetPath = Vmlld0NvbXBvbmVudHMvUmVsYXRlZEJsb2dzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/emirmakaveli/Desktop/blogsite/blogsite/Views/Account/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9Mb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -98,12 +102,20 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUm9sZS9JbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/emirmakaveli/Desktop/blogsite/blogsite/Views/Shared/Components/RelatedBlogs/Default.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL0NvbXBvbmVudHMvUmVsYXRlZEJsb2dzL0RlZmF1bHQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/emirmakaveli/Desktop/blogsite/blogsite/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL0Vycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/emirmakaveli/Desktop/blogsite/blogsite/Views/Shared/_AuthLayout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19BdXRoTGF5b3V0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emirmakaveli/Desktop/blogsite/blogsite/Views/Shared/_Comments.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19Db21tZW50cy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/emirmakaveli/Desktop/blogsite/blogsite/Views/Shared/_ValidationScriptsPartial.cshtml]
