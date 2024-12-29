@@ -47,6 +47,8 @@ namespace blogsite.Controllers
             {
                 try
                 {
+                    string? imageUrl = null;
+
                     if (image != null)
                     {
                         var filePath = Path.Combine("wwwroot/images", image.FileName);
@@ -54,14 +56,20 @@ namespace blogsite.Controllers
                         {
                             await image.CopyToAsync(stream);
                         }
-                        blog.ImageUrl = $"/images/{image.FileName}";
+                        imageUrl = $"/images/{image.FileName}";
                     }
 
-                    blog.CreatedBy = User.Identity.Name ?? "UnknownUser";
-                    blog.CreatedAt = DateTime.UtcNow;
+                    // Stored procedure çağrısı
+                    var sql = "CALL AddBlog({0}, {1}, {2}, {3})";
+                    await _context.Database.ExecuteSqlRawAsync(
+                        sql,
+                        blog.Title,
+                        blog.Content,
+                        blog.CategoryId,
+                        imageUrl
+                    );
 
-                    _context.Add(blog);
-                    await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Blog başarıyla eklendi.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
@@ -74,6 +82,7 @@ namespace blogsite.Controllers
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", blog.CategoryId);
             return View(blog);
         }
+
 
         // GET: Blog/Edit/5
         [Authorize(Roles = "Admin,Editor")] // Sadece Admin ve Editor için
@@ -173,14 +182,23 @@ namespace blogsite.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var blog = await _context.Blogs.FindAsync(id);
-            if (blog != null)
+            try
             {
-                _context.Blogs.Remove(blog);
-                await _context.SaveChangesAsync();
+                // Stored procedure çağrısı
+                var sql = "CALL DeleteBlog({0})";
+                await _context.Database.ExecuteSqlRawAsync(sql, id);
+
+                TempData["SuccessMessage"] = "Blog başarıyla silindi.";
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Hata: " + ex.Message);
+                TempData["ErrorMessage"] = "Blog silinirken bir hata oluştu.";
+            }
+
             return RedirectToAction(nameof(Index));
         }
+
 
         // GET: Blog/Details/5
         [Authorize] // Giriş yapan herhangi bir kullanıcı erişebilir
