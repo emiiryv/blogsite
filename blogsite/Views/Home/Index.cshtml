@@ -7,24 +7,23 @@
 <h2>Bloglar</h2>
 
 <div class="row">
-    @foreach (var item in Model)
+    @foreach (var blog in Model)
     {
         <div class="col-md-4">
-            <div class="card mb-4 box-shadow">
-                <img class="card-img-top" src="@item.ImageUrl" alt="Varsayılan Görsel">
+            <div class="card">
+                <img src="@(blog.ImageUrl ?? "/images/default.jpg")" class="card-img-top" alt="Blog Görseli">
                 <div class="card-body">
-                    <h5 class="card-title">@item.Title</h5>
-                    <p class="card-text">@item.Content</p>
-                    <a href="@Url.Action("Details", "Blog", new { id = item.Id })" class="btn btn-primary">Detayları Gör</a>
-                    <p class="card-text mt-2">
-                        <small class="text-muted">
-                            Kategori: @(item.Category != null ? item.Category.Name : "Bilinmiyor")<br />
-                            Yayınlanma Tarihi: @(item.CreatedAt.ToString("dd MMM yyyy"))<br />
-                            Yazar: @(item.CreatedBy ?? "Bilinmiyor") <!-- Blog yazarı burada görünüyor -->
-                        </small>
-                    </p>
+                    <h5 class="card-title">@blog.Title</h5>
+                    <p class="card-text">@blog.Content.Substring(0, Math.Min(blog.Content.Length, 100))...</p>
+                    <a href="/Blog/Details/@blog.Id" class="btn btn-primary">Detayları Gör</a>
+                </div>
+                <div class="card-footer">
+                    <small class="text-muted">Kategori: @blog.Category?.Name</small><br>
+                    <small class="text-muted">Yayınlanma Tarihi: @blog.CreatedAt.ToString("dd MMM yyyy")</small><br>
+                    <small class="text-muted">Yazar: @(blog.CreatedBy ?? "Bilinmiyor")</small>
                 </div>
             </div>
         </div>
     }
+}
 </div>

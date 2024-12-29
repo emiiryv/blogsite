@@ -20,3 +20,31 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+/* Kart Tasarımı */
+.card {
+  height: 400px; /* Kartların sabit yüksekliği */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden; /* İçeriğin taşmasını engeller */
+  margin: 15px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Hafif gölge efekti */
+}
+
+.card-body {
+  height: 200px; /* İçerik kısmı için sabit yükseklik */
+  overflow: hidden; /* Taşan metni gizler */
+  text-overflow: ellipsis; /* Taşan metne üç nokta ekler */
+  white-space: nowrap; /* Tek satırda gösterim */
+}
+
+.card img {
+  max-height: 180px; /* Görsel boyutlandırma */
+  object-fit: cover; /* Görseli uygun şekilde keser */
+  width: 100%;
+}
+
+.card-footer {
+  margin-top: auto;
+}

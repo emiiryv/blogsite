@@ -39,49 +39,59 @@ namespace blogsite.Controllers
 
         // POST: Blog/Create
         [HttpPost]
-        [Authorize(Roles = "Admin,Editor")] // Sadece Admin ve Editor için
+        [Authorize(Roles = "Admin,Editor")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Content,CategoryId")] Blog blog, IFormFile? image)
+        public async Task<IActionResult> Create([Bind("Title,Content,CategoryId")] Blog blog, IFormFile? image)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
+                    // Varsayılan olarak görsel yolu null
                     string? imageUrl = null;
 
+                    // Görsel Yükleme İşlemi
                     if (image != null)
                     {
-                        var filePath = Path.Combine("wwwroot/images", image.FileName);
+                        var uploadsFolder = Path.Combine("wwwroot/images");
+                        if (!Directory.Exists(uploadsFolder))
+                        {
+                            Directory.CreateDirectory(uploadsFolder); // Eğer klasör yoksa oluştur
+                        }
+
+                        var filePath = Path.Combine(uploadsFolder, image.FileName);
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
                             await image.CopyToAsync(stream);
                         }
+
                         imageUrl = $"/images/{image.FileName}";
                     }
 
-                    // Stored procedure çağrısı
-                    var sql = "CALL AddBlog({0}, {1}, {2}, {3})";
-                    await _context.Database.ExecuteSqlRawAsync(
-                        sql,
-                        blog.Title,
-                        blog.Content,
-                        blog.CategoryId,
-                        imageUrl
-                    );
+                    // Kullanıcı ve Tarih Bilgisi Atama
+                    blog.CreatedBy = User.Identity?.Name ?? "Anonim Kullanıcı";
+                    blog.CreatedAt = DateTime.UtcNow;
+                    blog.ImageUrl = imageUrl;
 
-                    TempData["SuccessMessage"] = "Blog başarıyla eklendi.";
+                    // Veritabanına Kaydetme
+                    _context.Blogs.Add(blog);
+                    await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "Blog başarıyla oluşturuldu.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Hata: " + ex.Message);
-                    ModelState.AddModelError(string.Empty, "Bir hata oluştu. Lütfen tekrar deneyin.");
+                    Console.WriteLine($"Hata: {ex.Message}");
+                    ModelState.AddModelError("", "Bir hata oluştu. Lütfen tekrar deneyin.");
                 }
             }
 
+            // Kategori seçimi için tekrar verileri gönder
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", blog.CategoryId);
             return View(blog);
         }
+
 
 
         // GET: Blog/Edit/5
