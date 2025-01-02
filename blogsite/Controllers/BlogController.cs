@@ -5,6 +5,7 @@ using blogsite.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.IO;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Npgsql;
 
 namespace blogsite.Controllers
 {
@@ -47,10 +48,8 @@ namespace blogsite.Controllers
             {
                 try
                 {
-                    // Varsayılan olarak görsel yolu null
-                    string? imageUrl = null;
-
                     // Görsel Yükleme İşlemi
+                    string? imageUrl = null;
                     if (image != null)
                     {
                         var uploadsFolder = Path.Combine("wwwroot/images");
@@ -68,14 +67,17 @@ namespace blogsite.Controllers
                         imageUrl = $"/images/{image.FileName}";
                     }
 
-                    // Kullanıcı ve Tarih Bilgisi Atama
-                    blog.CreatedBy = User.Identity?.Name ?? "Anonim Kullanıcı";
-                    blog.CreatedAt = DateTime.UtcNow;
-                    blog.ImageUrl = imageUrl;
+                    // Stored Procedure için Parametreler
+                    var parameters = new[]
+                    {
+                new NpgsqlParameter("p_Title", blog.Title),
+                new NpgsqlParameter("p_Content", blog.Content),
+                new NpgsqlParameter("p_CategoryId", blog.CategoryId),
+                new NpgsqlParameter("p_ImageUrl", (object?)imageUrl ?? DBNull.Value)
+            };
 
-                    // Veritabanına Kaydetme
-                    _context.Blogs.Add(blog);
-                    await _context.SaveChangesAsync();
+                    // Stored Procedure'ü Çağırma
+                    await _context.Database.ExecuteSqlRawAsync("CALL addblog(@p_Title, @p_Content, @p_CategoryId, @p_ImageUrl);", parameters);
 
                     TempData["SuccessMessage"] = "Blog başarıyla oluşturuldu.";
                     return RedirectToAction(nameof(Index));
@@ -91,6 +93,7 @@ namespace blogsite.Controllers
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", blog.CategoryId);
             return View(blog);
         }
+
 
 
 
