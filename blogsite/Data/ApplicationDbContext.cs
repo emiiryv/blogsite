@@ -16,10 +16,26 @@ namespace blogsite.Data
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Blog> ActiveBlogs { get; set; }
+        public DbSet<BlogCountByCategory> BlogCountByCategory { get; set; }
+        public DbSet<UserBlogCount> UserBlogCounts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<UserBlogCount>(entity =>
+        {
+            entity.HasKey(u => u.row_id);  // RowId'yi anahtar olarak belirliyoruz
+            entity.ToView("userblogcount");  // View adı küçük harflerle belirtilmeli
+        });
+
+            modelBuilder.Entity<BlogCountByCategory>()
+            .HasKey(b => b.id);  // Yeni ID'yi anahtar olarak belirliyoruz
+
+
+
+            modelBuilder.Entity<Blog>().ToView("ActiveBlogs").HasKey(b => b.Id);
 
             // Identity tablolarını özelleştirme
             modelBuilder.Entity<IdentityUser>(b =>

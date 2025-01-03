@@ -11,6 +11,7 @@
         <tr>
             <th>Email</th>
             <th>Roles</th>
+            <th>Blog Count</th> <!-- Yeni sütun eklendi -->
             <th>Actions</th>
         </tr>
     </thead>
@@ -25,6 +26,7 @@
                         <span class="badge bg-primary">@role</span>
                     }
                 </td>
+                <td>@user.BlogCount</td> <!-- BlogCount bilgisi burada gösteriliyor -->
                 <td>
                     <a asp-action="EditUser" asp-route-id="@user.Id" class="btn btn-warning btn-sm">Edit</a>
                 </td>

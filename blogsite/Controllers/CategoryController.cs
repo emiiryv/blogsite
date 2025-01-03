@@ -27,7 +27,6 @@ namespace blogsite.Controllers
             return View(await _context.Categories.ToListAsync());
         }
 
-        // GET: Category/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -36,7 +35,22 @@ namespace blogsite.Controllers
             }
 
             var category = await _context.Categories
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Where(c => c.Id == id)
+                .Select(c => new CategoryViewModel
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    BlogCounts = _context.BlogCountByCategory
+                        .Where(b => b.categoryid == c.Id)  // id ile ilişkilendirme
+                        .Select(b => new BlogCountByCategoryViewModel
+                        {
+                            CategoryName = b.categoryname,  // küçük harfli sütun adı
+                            BlogCount = b.blogcount  // küçük harfli sütun adı
+                        })
+                        .ToList()  // burada veri çekme işlemi yapılıyor
+                })
+                .FirstOrDefaultAsync();
+
             if (category == null)
             {
                 return NotFound();
@@ -45,43 +59,6 @@ namespace blogsite.Controllers
             return View(category);
         }
 
-        // GET: Category/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Category/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name")] Category category)
-        {
-            Console.WriteLine($"Gelen Kategori Adı: {category.Name}");
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Add(category);
-                    await _context.SaveChangesAsync();
-                    Console.WriteLine("Kategori başarıyla eklendi.");
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Hata: {ex.Message}");
-                }
-            }
-            else
-            {
-                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-                Console.WriteLine($"ModelState Hataları: {string.Join(", ", errors)}");
-            }
-
-            return View(category);
-        }
 
 
 

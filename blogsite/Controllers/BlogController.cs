@@ -24,11 +24,12 @@ namespace blogsite.Controllers
         public async Task<IActionResult> Index()
         {
             var blogs = User.IsInRole("Admin")
-                ? _context.Blogs.Include(b => b.Category)
-                : _context.Blogs.Include(b => b.Category).Where(b => b.CreatedBy == User.Identity.Name);
+                ? _context.ActiveBlogs.Include(b => b.Category)
+                : _context.ActiveBlogs.Include(b => b.Category).Where(b => b.CreatedBy == User.Identity.Name);
 
             return View(await blogs.ToListAsync());
         }
+
 
         // GET: Blog/Create
         [Authorize(Roles = "Admin,Editor")] // Sadece Admin ve Editor için
