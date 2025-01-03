@@ -23,12 +23,34 @@ namespace blogsite.Controllers
         [Authorize(Roles = "Admin,Editor")] // Sadece Admin ve Editor için
         public async Task<IActionResult> Index()
         {
+            // Aktif blogları alıyoruz
             var blogs = User.IsInRole("Admin")
                 ? _context.ActiveBlogs.Include(b => b.Category)
                 : _context.ActiveBlogs.Include(b => b.Category).Where(b => b.CreatedBy == User.Identity.Name);
 
-            return View(await blogs.ToListAsync());
+            // BlogWithCommentCount view'inden veriyi alıyoruz
+            var blogCommentCounts = await _context.Set<BlogWithCommentCount>().ToListAsync();
+
+            // Blog yorum sayılarının hızlıca alınması için Dictionary kullanıyoruz
+            var commentCountDict = blogCommentCounts.ToDictionary(b => b.Id, b => b.CommentCount);
+
+            // Blogları ve yorum sayılarını birleştiriyoruz
+            var blogWithCommentCountData = blogs.Select(b => new BlogWithDetailsViewModel
+            {
+                Id = b.Id,
+                Title = b.Title,
+                Content = b.Content, // İçerik
+                CreatedBy = b.CreatedBy, // Yazar
+                CreatedAt = b.CreatedAt, // Oluşturulma tarihi
+                CategoryName = b.Category != null ? b.Category.Name : "Unknown", // Kategori
+                CommentCount = commentCountDict.ContainsKey(b.Id) ? commentCountDict[b.Id] : 0 // Yorum sayısı
+            }).ToList();
+
+            // Veriyi view'e gönderiyoruz
+            return View(blogWithCommentCountData);
         }
+
+
 
 
         // GET: Blog/Create

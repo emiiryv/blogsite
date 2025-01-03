@@ -19,10 +19,14 @@ namespace blogsite.Data
         public DbSet<Blog> ActiveBlogs { get; set; }
         public DbSet<BlogCountByCategory> BlogCountByCategory { get; set; }
         public DbSet<UserBlogCount> UserBlogCounts { get; set; }
+        public DbSet<BlogWithCommentCount> BlogWithCommentCounts { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<BlogWithCommentCount>().ToView("BlogWithCommentCount");
+
 
             modelBuilder.Entity<UserBlogCount>(entity =>
         {

@@ -1,4 +1,5 @@
-@model IEnumerable<blogsite.Models.Blog>
+@using blogsite.Models
+@model IEnumerable<blogsite.Models.BlogWithDetailsViewModel>
 
 @{
     ViewData["Title"] = "Bloglar";
@@ -22,6 +23,7 @@
             <th>Author</th> <!-- Blog yazarı -->
             <th>Category</th>
             <th>Created At</th>
+            <th>Comment Count</th> <!-- Yorum sayısı -->
             <th>Actions</th>
         </tr>
     </thead>
@@ -42,8 +44,9 @@
                 </td>
 
                 <td>@item.CreatedBy</td> <!-- Blog yazarı -->
-                <td>@(item.Category != null ? item.Category.Name : "Unknown")</td>
-                <td>@item.CreatedAt.ToShortDateString()</td>
+                <td>@item.CategoryName</td> <!-- Kategori adı -->
+                <td>@item.CreatedAt.ToShortDateString()</td> <!-- Oluşturulma tarihi -->
+                <td>@item.CommentCount</td> <!-- Yorum sayısı -->
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Details</a>
                     @if (User.IsInRole("Admin") || User.Identity.Name == item.CreatedBy)
