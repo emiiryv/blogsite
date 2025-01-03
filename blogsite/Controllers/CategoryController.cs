@@ -20,7 +20,6 @@ namespace blogsite.Controllers
         {
             _context = context;
         }
-
         // GET: Category
         public async Task<IActionResult> Index()
         {
@@ -41,13 +40,15 @@ namespace blogsite.Controllers
                     Id = c.Id,
                     Name = c.Name,
                     BlogCounts = _context.BlogCountByCategory
-                        .Where(b => b.categoryid == c.Id)  // id ile ilişkilendirme
+                        .Where(b => b.categoryid == c.Id)
                         .Select(b => new BlogCountByCategoryViewModel
                         {
-                            CategoryName = b.categoryname,  // küçük harfli sütun adı
-                            BlogCount = b.blogcount  // küçük harfli sütun adı
+                            CategoryName = b.categoryname,
+                            BlogCount = b.blogcount,
+                            // Burada CommentCount sıfır olarak başlatılacak, sonra güncellenecek
+                            CommentCount = 0
                         })
-                        .ToList()  // burada veri çekme işlemi yapılıyor
+                        .ToList()
                 })
                 .FirstOrDefaultAsync();
 
@@ -56,8 +57,25 @@ namespace blogsite.Controllers
                 return NotFound();
             }
 
+            // BlogCounts listesindeki her öğe için yorum sayısını ekleyelim
+            foreach (var item in category.BlogCounts)
+            {
+                // Blog ile ilişkili yorum sayısını hesapla
+                var commentCount = await _context.Comments
+                    .Where(com => com.Blog.CategoryId == id) // Burada CategoryId'yi kullanarak ilişkilendirme yapıyoruz
+                    .CountAsync();
+
+                // Yorum sayısını ekleyelim
+                item.CommentCount = commentCount;
+            }
+
             return View(category);
         }
+
+
+
+
+
 
 
 

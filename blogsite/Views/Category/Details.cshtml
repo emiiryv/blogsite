@@ -1,18 +1,15 @@
-@model CategoryViewModel
+@using blogsite.Models 
+@model blogsite.Models.CategoryViewModel
 
-<h2>Category Details</h2>
+<h2>@Model.Name Kategorisi</h2>
 
-<div>
-    <h3>Category Name: @Model.Name</h3>
-    <p>Category ID: @Model.Id</p>
-</div>
-
-<h4>Blog Count by Category</h4>
+<!-- Kategoriye ait blog sayısı ve yorum sayısı -->
 <table class="table">
     <thead>
         <tr>
-            <th>Category Name</th>
-            <th>Blog Count</th>
+            <th>Kategori Adı</th>
+            <th>Blog Sayısı</th>
+            <th>Yorum Sayısı</th>
         </tr>
     </thead>
     <tbody>
@@ -21,6 +18,7 @@
             <tr>
                 <td>@item.CategoryName</td>
                 <td>@item.BlogCount</td>
+                <td>@item.CommentCount</td> <!-- Yorum sayısı buraya eklendi -->
             </tr>
         }
     </tbody>

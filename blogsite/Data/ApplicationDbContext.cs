@@ -20,12 +20,19 @@ namespace blogsite.Data
         public DbSet<BlogCountByCategory> BlogCountByCategory { get; set; }
         public DbSet<UserBlogCount> UserBlogCounts { get; set; }
         public DbSet<BlogWithCommentCount> BlogWithCommentCounts { get; set; }
+        public DbSet<CategoryWithCommentCount> CategoryWithCommentCount { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<BlogWithCommentCount>().ToView("BlogWithCommentCount");
+            modelBuilder.Entity<CategoryWithCommentCount>(entity =>
+   {
+       entity.HasNoKey();  // View'lerin genellikle birincil anahtarı yoktur
+       entity.ToView("CategoryWithCommentCount");  // View'in adını yazıyoruz
+   });
 
 
             modelBuilder.Entity<UserBlogCount>(entity =>
