@@ -24,9 +24,17 @@ namespace blogsite.Data
 
 
 
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<MostCommentedBlogViewModel>().HasNoKey();
+            modelBuilder.Entity<LongestBlogViewModel>().HasNoKey();
+
+
+
             modelBuilder.Entity<BlogWithCommentCount>().ToView("BlogWithCommentCount");
             modelBuilder.Entity<CategoryWithCommentCount>(entity =>
    {

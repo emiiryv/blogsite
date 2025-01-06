@@ -1,0 +1,30 @@
+@model IEnumerable<dynamic>
+
+<h2>Filtrelenmiş Bloglar</h2>
+
+<div class="row">
+    @foreach (var blog in Model)
+    {
+        <div class="col-md-4">
+            <div class="card">
+                <img src="@(blog.ImageUrl ?? "/images/default.jpg")" class="card-img-top" alt="Blog Görseli">
+                <div class="card-body">
+                    <h5 class="card-title">@blog.Title</h5>
+                    <p class="card-text">
+                        <!-- ContentLength veya CommentCount'u kontrol ederek dinamik şekilde gösteriyoruz -->
+                        @(blog.GetType().GetProperty("ContentLength") != null
+                            ? $"İçerik Uzunluğu: {blog.ContentLength}"
+                            : $"Yorum Sayısı: {blog.CommentCount}")
+                    </p>
+                    <a href="/Blog/Details/@blog.BlogId" class="btn btn-primary">Detayları Gör</a>
+                </div>
+                <div class="card-footer">
+                    <small class="text-muted">Kategori: @blog.CategoryName</small><br>
+                    <small class="text-muted">Yayınlanma Tarihi: @blog.CreatedAt.ToString("dd MMM yyyy")</small><br>
+                    <small class="text-muted">Yazar: @(blog.CreatedBy ?? "Bilinmiyor")</small>
+                </div>
+            </div>
+        </div>
+    }
+}
+</div>

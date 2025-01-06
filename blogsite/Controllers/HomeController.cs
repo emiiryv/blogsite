@@ -4,36 +4,56 @@ using Microsoft.EntityFrameworkCore;
 using blogsite.Models;
 using blogsite.Data;
 
-namespace blogsite.Controllers;
-
-public class HomeController : Controller
+namespace blogsite.Controllers
 {
-    private readonly ApplicationDbContext _context;
-
-    public HomeController(ApplicationDbContext context)
+    public class HomeController : Controller
     {
-        _context = context;
-    }
+        private readonly ApplicationDbContext _context;
 
-    public async Task<IActionResult> Index()
-    {
-        // Blogları kategori bilgileriyle birlikte getir
-        var blogs = await _context.Blogs
-            .Include(b => b.Category) // Kategori bilgilerini dahil et
-            .OrderByDescending(b => b.CreatedAt) // En son eklenen bloglar en başta
-            .ToListAsync();
+        public HomeController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
 
-        return View(blogs);
-    }
+        // Anasayfa: Blogları default olarak getiriyoruz (son eklenenler)
+        public async Task<IActionResult> Index()
+        {
+            var blogs = await _context.Blogs
+                .Include(b => b.Category)
+                .OrderByDescending(b => b.CreatedAt)
+                .ToListAsync();
 
-    public IActionResult Privacy()
-    {
-        return View();
-    }
+            return View(blogs);
+        }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        public async Task<IActionResult> MostCommentedBlogs(int limit = 5)
+        {
+            var mostCommentedBlogs = await _context.Set<MostCommentedBlogViewModel>()
+                .FromSqlInterpolated($"SELECT * FROM getMostCommentedBlogs({limit})")
+                .ToListAsync();
+
+            return View("FilteredBlogs", mostCommentedBlogs);
+        }
+
+        public async Task<IActionResult> LongestBlogs(int limit = 5)
+        {
+            var longestBlogs = await _context.Set<LongestBlogViewModel>()
+                .FromSqlInterpolated($"SELECT * FROM getLongestBlogs({limit})")
+                .ToListAsync();
+
+            return View("FilteredBlogs", longestBlogs);
+        }
+
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
     }
 }
