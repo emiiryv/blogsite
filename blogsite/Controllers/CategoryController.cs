@@ -26,6 +26,28 @@ namespace blogsite.Controllers
             return View(await _context.Categories.ToListAsync());
         }
 
+        // GET: Category/Create
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: Category/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Id,Name")] Category category)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(category);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Category created successfully.";
+                return RedirectToAction(nameof(Index));
+            }
+            return View(category);
+        }
+
+
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
